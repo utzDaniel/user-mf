@@ -1,0 +1,14 @@
+services:
+  user-mf:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: user-mf
+    ports:
+      - "4201:80"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

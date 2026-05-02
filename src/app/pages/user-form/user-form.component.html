@@ -1,0 +1,31 @@
+<p-dialog
+  [header]="dialogTitle"
+  [visible]="dialogVisible()"
+  (visibleChange)="onVisibleChange($event)"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [closable]="true"
+>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4 pt-2">
+    <div class="flex flex-col gap-1">
+      <label for="name" class="font-semibold">Nome</label>
+      <input id="name" pInputText formControlName="name" placeholder="Nome completo" />
+      @if (form.get('name')?.invalid && form.get('name')?.touched) {
+        <small class="text-red-500">Nome é obrigatório (mínimo 2 caracteres).</small>
+      }
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label for="email" class="font-semibold">E-mail</label>
+      <input id="email" pInputText formControlName="email" placeholder="email@exemplo.com" />
+      @if (form.get('email')?.invalid && form.get('email')?.touched) {
+        <small class="text-red-500">E-mail válido é obrigatório.</small>
+      }
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Cancelar" severity="secondary" [text]="true" (onClick)="onCancel()" />
+    <p-button label="Salvar" [loading]="isLoading()" (onClick)="onSubmit()" />
+  </ng-template>
+</p-dialog>
