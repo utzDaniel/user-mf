@@ -4,7 +4,8 @@ module.exports = withNativeFederation({
   name: 'user-mf',
 
   exposes: {
-    './Component': './src/app/app.component.ts',
+    './Component': './src/app/entry.component.ts',
+    './Routes': './src/app/app.routes.ts',
   },
 
   shared: {

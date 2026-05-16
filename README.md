@@ -10,7 +10,7 @@
 
 Responsabilidades:
 - CRUD completo de usuários (listar, criar, editar, excluir)
-- Comunicação com a `user-api` via `gateway-api` em `:8090`
+- Comunicação direta com a `user-api` em `:8081`
 - Autenticação **delegada ao shell** — o Bearer token é injetado automaticamente pelo interceptor do `shell-app`
 
 ---
@@ -38,12 +38,12 @@ src/
       models/
         user.model.ts         # User, UserCreateRequest, UserUpdateRequest
       services/
-        user.service.ts       # CRUD via HttpClient → gateway :8090
+        user.service.ts       # CRUD via HttpClient → user-api :8081
     pages/
       user-list/              # Tabela PrimeNG + ações editar/excluir
       user-form/              # Dialog PrimeNG para criar/editar
   environments/
-    environment.ts            # gatewayUrl: 'http://localhost:8090'
+    environment.ts            # gatewayUrl: 'http://localhost:8081'
     environment.production.ts
 ```
 
@@ -56,7 +56,7 @@ src/
 | Node.js | 20+ |
 | Angular CLI | 19.x |
 | shell-app | rodando em `:4200` |
-| gateway-api | rodando em `:8090` |
+| user-api | rodando em `:8081` |
 
 ---
 
@@ -135,7 +135,7 @@ O shell registra este remote em `public/federation.manifest.json`:
 
 ## API
 
-Base URL: `http://localhost:8090/api/v1/users`
+Base URL: `http://localhost:8081/api/v1/users`
 
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
@@ -146,6 +146,8 @@ Base URL: `http://localhost:8090/api/v1/users`
 | `DELETE` | `/api/v1/users/{id}` | Excluir usuário |
 
 O Bearer token é injetado automaticamente pelo `includeBearerTokenInterceptor` do `shell-app`. O `user-mf` **não** configura interceptors de autenticação próprios.
+
+> **Nota:** as requisições vão direto para a `user-api` em `:8081` — sem gateway intermediário.
 
 ---
 

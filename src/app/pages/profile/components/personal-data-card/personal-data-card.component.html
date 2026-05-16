@@ -1,0 +1,95 @@
+<div class="card">
+  <!-- Cabeçalho -->
+  <div class="card-header">
+    <h2 class="card-title">Dados pessoais</h2>
+    @if (!editMode()) {
+      <p-button
+        label="Editar"
+        icon="pi pi-pencil"
+        [outlined]="true"
+        size="small"
+        (onClick)="startEdit()"
+      />
+    }
+  </div>
+
+  <!-- Modo Visualização -->
+  @if (!editMode()) {
+    <div class="fields-list">
+      <div class="field-row">
+        <div class="field-icon" style="background-color: #e0e7ff">
+          <i class="pi pi-user" style="color: #4f46e5"></i>
+        </div>
+        <div>
+          <div class="field-label">Nome Completo</div>
+          <div class="field-value">{{ profile.nomeCompleto }}</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon" style="background-color: #d1fae5">
+          <i class="pi pi-id-card" style="color: #059669"></i>
+        </div>
+        <div>
+          <div class="field-label">CPF</div>
+          <div class="field-value">{{ profile.cpf }}</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon" style="background-color: #dbeafe">
+          <i class="pi pi-envelope" style="color: #2563eb"></i>
+        </div>
+        <div>
+          <div class="field-label">Email</div>
+          <div class="field-value">{{ profile.email }}</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-icon" style="background-color: #fef3c7">
+          <i class="pi pi-phone" style="color: #d97706"></i>
+        </div>
+        <div>
+          <div class="field-label">Telefone</div>
+          <div class="field-value">{{ profile.telefone }}</div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modo Edição -->
+  @if (editMode()) {
+    <div class="edit-fields">
+      <div class="edit-group">
+        <label>Nome Completo</label>
+        <input pInputText [(ngModel)]="nomeCompleto" placeholder="Nome completo" class="w-full" />
+      </div>
+      <div class="edit-group">
+        <label>CPF</label>
+        <input pInputText [(ngModel)]="cpf" placeholder="000.000.000-00" class="w-full" />
+      </div>
+      <div class="edit-group">
+        <label>E-mail</label>
+        <input pInputText [(ngModel)]="email" placeholder="email@exemplo.com" class="w-full" />
+      </div>
+      <div class="edit-group">
+        <label>Telefone</label>
+        <input pInputText [(ngModel)]="telefone" placeholder="(00) 00000-0000" class="w-full" />
+      </div>
+      <div class="edit-actions">
+        <p-button
+          label="Cancelar"
+          [outlined]="true"
+          severity="secondary"
+          (onClick)="cancel()"
+          [disabled]="saving()"
+        />
+        <p-button
+          label="Salvar"
+          icon="pi pi-check"
+          (onClick)="save()"
+          [loading]="saving()"
+        />
+      </div>
+    </div>
+  }
+</div>
+

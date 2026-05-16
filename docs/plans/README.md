@@ -7,6 +7,7 @@ Status key: `draft`, `approved`, `done`
 ## Planos disponíveis
 
 - [Initial Setup](2026-05-02-initial-setup.md) — Scaffold Angular 19, Native Federation remote, CRUD de usuários com PrimeNG — `done`
+- [Perfil Inicial](2026-05-16-inicial-perfil.md) — Tela Meu Perfil: dados pessoais, alterar senha e gestão de família — `done`
 
 ## Como usar
 

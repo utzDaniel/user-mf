@@ -12,7 +12,7 @@ describe('UserService', () => {
   let service: UserService;
   let httpMock: HttpTestingController;
 
-  const baseUrl = 'http://localhost:8090/api/v1/users';
+  const baseUrl = 'http://localhost:8081/api/v1/users';
 
   const mockUser: User = {
     id: 1,

@@ -31,7 +31,7 @@ Usuários sem a role `USER` são redirecionados para `/forbidden` pelo shell ant
 
 ## Bearer Token
 
-O token é injetado automaticamente pelo shell em todas as requisições cujo URL começa com `environment.gatewayUrl` (`http://localhost:8090`).
+O token é injetado automaticamente pelo shell em todas as requisições cujo URL começa com `environment.gatewayUrl` (`http://localhost:8081`).
 
 O `user-mf` apenas configura o `HttpClient` sem interceptors:
 

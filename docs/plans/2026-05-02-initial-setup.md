@@ -1,6 +1,6 @@
 # Plano: Initial Setup
 
-Status: draft
+Status: done
 
 Autor: Daniel
 

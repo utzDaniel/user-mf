@@ -1,0 +1,300 @@
+<div class="card">
+  <!-- Cabeçalho -->
+  <div class="card-header">
+    <div>
+      <h2 class="text-xl font-semibold m-0">Minha Família</h2>
+      <p class="text-sm text-gray-500 mt-1 mb-0">
+        Gerencie seus familiares e convites pendentes.
+      </p>
+    </div>
+    @if (hasFamily()) {
+      <p-button
+        label="+ Adicionar familiar"
+        icon="pi pi-plus"
+        (onClick)="openAddMember()"
+      />
+    }
+  </div>
+
+  <!-- Estado sem família -->
+  @if (!hasFamily()) {
+    <div class="empty-state">
+      <i class="pi pi-users empty-icon"></i>
+      <p class="empty-text">Você ainda não pertence a uma família.</p>
+      <p-button label="Criar família" icon="pi pi-plus" (onClick)="openCreateFamily()" />
+    </div>
+  }
+
+  <!-- Estado com família -->
+  @if (hasFamily()) {
+    <p-tabs value="familiares" class="mt-3">
+      <p-tablist>
+        <p-tab value="familiares">Familiares ({{ allMembers().length }})</p-tab>
+        <p-tab value="recebidos">Convites pendentes recebidos ({{ receivedInvitations().length }})</p-tab>
+        <p-tab value="enviados">Convites enviados ({{ sentInvitations().length }})</p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <!-- Aba Familiares -->
+        <p-tabpanel value="familiares">
+          <p-table [value]="allMembers()" [tableStyle]="{ 'min-width': '40rem' }">
+            <ng-template #header>
+              <tr>
+                <th>NOME</th>
+                <th>EMAIL</th>
+                <th>PARENTESCO</th>
+                <th>STATUS</th>
+                <th>AÇÕES</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-member>
+              <tr>
+                <td>
+                  <div style="display:flex;align-items:center;gap:.5rem">
+                    <p-avatar
+                      [label]="getInitials(member.nomeCompleto)"
+                      shape="circle"
+                      styleClass="font-bold"
+                    />
+                    <span>{{ member.nomeCompleto }}</span>
+                    @if (isTitular(member)) {
+                      <p-tag value="Você" severity="info" />
+                    }
+                  </div>
+                </td>
+                <td>{{ member.email }}</td>
+                <td>{{ parentescoLabel(member.parentesco) }}</td>
+                <td>
+                  <p-tag
+                    [value]="member.status === 'ATIVO' ? 'Ativo' : 'Inativo'"
+                    [severity]="getStatusSeverity(member.status)"
+                  />
+                </td>
+                <td>
+                  @if (!isTitular(member)) {
+                    <p-button
+                      icon="pi pi-ellipsis-v"
+                      [rounded]="true"
+                      [text]="true"
+                      (onClick)="openMemberMenu($event, member, rowMenu)"
+                    />
+                    <p-menu #rowMenu [popup]="true" [model]="rowMenuItems()" />
+                  } @else {
+                    <span style="color:#9ca3af">—</span>
+                  }
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template #empty>
+              <tr>
+                <td colspan="5" style="text-align:center;padding:1rem">Nenhum membro encontrado.</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-tabpanel>
+
+        <!-- Aba Convites Recebidos -->
+        <p-tabpanel value="recebidos">
+          <p-table [value]="receivedInvitations()" [tableStyle]="{ 'min-width': '40rem' }">
+            <ng-template #header>
+              <tr>
+                <th>SOLICITANTE</th>
+                <th>EMAIL</th>
+                <th>PARENTESCO</th>
+                <th>STATUS</th>
+                <th>AÇÕES</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-inv>
+              <tr>
+                <td>{{ inv.requesterNome }}</td>
+                <td>{{ inv.receiverEmail }}</td>
+                <td>{{ parentescoLabel(inv.parentesco) }}</td>
+                <td>{{ inv.status }}</td>
+                <td>
+                  <p-button
+                    label="Aceitar"
+                    severity="success"
+                    size="small"
+                    styleClass="mr-2"
+                    (onClick)="acceptInvitation(inv.id)"
+                  />
+                  <p-button
+                    label="Recusar"
+                    severity="danger"
+                    [outlined]="true"
+                    size="small"
+                    (onClick)="rejectInvitation(inv.id)"
+                  />
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template #empty>
+              <tr>
+                <td colspan="5" style="text-align:center;padding:1rem">Nenhum convite recebido.</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-tabpanel>
+
+        <!-- Aba Convites Enviados -->
+        <p-tabpanel value="enviados">
+          <p-table [value]="sentInvitations()" [tableStyle]="{ 'min-width': '40rem' }">
+            <ng-template #header>
+              <tr>
+                <th>DESTINATÁRIO</th>
+                <th>PARENTESCO</th>
+                <th>STATUS</th>
+                <th>CRIADO EM</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-inv>
+              <tr>
+                <td>{{ inv.receiverEmail }}</td>
+                <td>{{ parentescoLabel(inv.parentesco) }}</td>
+                <td>{{ inv.status }}</td>
+                <td>{{ inv.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+              </tr>
+            </ng-template>
+            <ng-template #empty>
+              <tr>
+                <td colspan="4" style="text-align:center;padding:1rem">Nenhum convite enviado.</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  }
+</div>
+
+<!-- Dialog Criar Família -->
+<p-dialog
+  header="Criar família"
+  [visible]="createFamilyVisible()"
+  (visibleChange)="createFamilyVisible.set($event)"
+  [modal]="true"
+  [style]="{ width: '400px' }"
+>
+  <form [formGroup]="createFamilyForm" (ngSubmit)="submitCreateFamily()">
+    <div class="dialog-body">
+      <div class="dialog-group">
+        <label>Nome da família</label>
+      <input pInputText formControlName="nome" placeholder="Ex: Família Silva" class="w-full" />
+      </div>
+    </div>
+    <div class="dialog-actions">
+      <p-button
+        label="Cancelar"
+        [outlined]="true"
+        severity="secondary"
+        type="button"
+        (onClick)="createFamilyVisible.set(false)"
+      />
+      <p-button
+        label="Criar"
+        type="submit"
+        [disabled]="createFamilyForm.invalid"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<!-- Dialog Adicionar Familiar -->
+<p-dialog
+  header="Adicionar familiar"
+  [visible]="addMemberVisible()"
+  (visibleChange)="addMemberVisible.set($event)"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+>
+  <form [formGroup]="addMemberForm" (ngSubmit)="submitAddMember()">
+    <div class="dialog-body">
+      <div class="dialog-group">
+        <label>E-mail do familiar</label>
+        <input
+          pInputText
+          formControlName="receiverEmail"
+          placeholder="email@exemplo.com"
+          class="w-full"
+        />
+        @if (addMemberForm.get('receiverEmail')?.invalid && addMemberForm.get('receiverEmail')?.dirty) {
+          <small style="color:#ef4444">E-mail inválido</small>
+        }
+      </div>
+      <div class="dialog-group">
+        <label>Parentesco</label>
+        <p-select
+          formControlName="parentesco"
+          [options]="parentescoOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Selecione o parentesco"
+          styleClass="w-full"
+        />
+      </div>
+    </div>
+    <div class="dialog-actions">
+      <p-button
+        label="Cancelar"
+        [outlined]="true"
+        severity="secondary"
+        type="button"
+        (onClick)="addMemberVisible.set(false)"
+      />
+      <p-button
+        label="Enviar convite"
+        type="submit"
+        [disabled]="addMemberForm.invalid"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<!-- Dialog Editar Membro -->
+<p-dialog
+  header="Editar membro"
+  [visible]="editMemberVisible()"
+  (visibleChange)="editMemberVisible.set($event)"
+  [modal]="true"
+  [style]="{ width: '400px' }"
+>
+  <form [formGroup]="editMemberForm" (ngSubmit)="submitEditMember()">
+    <div class="dialog-body">
+      <div class="dialog-group">
+        <label>Parentesco</label>
+        <p-select
+          formControlName="parentesco"
+          [options]="parentescoOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Selecione o parentesco"
+          styleClass="w-full"
+        />
+      </div>
+      <div class="dialog-group">
+        <label>Status</label>
+        <p-select
+          formControlName="status"
+          [options]="statusOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Selecione o status"
+          styleClass="w-full"
+        />
+      </div>
+    </div>
+    <div class="dialog-actions">
+      <p-button
+        label="Cancelar"
+        [outlined]="true"
+        severity="secondary"
+        type="button"
+        (onClick)="editMemberVisible.set(false)"
+      />
+      <p-button label="Salvar" type="submit" />
+    </div>
+  </form>
+</p-dialog>
+
+<p-confirmDialog />

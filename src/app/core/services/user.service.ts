@@ -10,7 +10,7 @@ import { User, UserCreateRequest, UserUpdateRequest } from '../models/user.model
 })
 export class UserService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.gatewayUrl}/api/v1/users`;
+  private readonly baseUrl = `${environment.apiUserUrl}/api/v1/users`;
 
   listUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.baseUrl);

@@ -104,10 +104,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "user-mf:build:production"
+              "buildTarget": "user-mf:build-original:production"
             },
             "development": {
-              "buildTarget": "user-mf:build:development"
+              "buildTarget": "user-mf:build-original:development"
             }
           },
           "defaultConfiguration": "development"
