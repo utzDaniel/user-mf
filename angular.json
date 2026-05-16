@@ -16,6 +16,23 @@
       "prefix": "app",
       "architect": {
         "build": {
+          "builder": "@angular-architects/native-federation:build",
+          "options": {
+            "target": "user-mf:build-original",
+            "dev": false
+          },
+          "configurations": {
+            "production": {
+              "target": "user-mf:build-original:production",
+              "dev": false
+            },
+            "development": {
+              "target": "user-mf:build-original:development"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "build-original": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/user-mf",
@@ -80,7 +97,10 @@
         "serve-original": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "port": 4201
+            "port": 4201,
+            "headers": {
+              "Access-Control-Allow-Origin": "*"
+            }
           },
           "configurations": {
             "production": {
